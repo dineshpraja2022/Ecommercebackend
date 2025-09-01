@@ -1,18 +1,20 @@
-// server.js
+// api/server.js
 import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import dotenv from "dotenv";
-import { connectDB } from "./config/connectDB.js";
-import { connectCloudinary } from "./config/cloudinary.js";
+import { connectDB } from "../config/connectDB.js";
+import { connectCloudinary } from "../config/cloudinary.js";
 
+// ✅ Load environment variables
 dotenv.config();
+
 const app = express();
 
 // ✅ Allowed frontend origins
 const allowedOrigins = [
   "http://localhost:5173", // local dev
-  "https://your-frontend.vercel.app", // production frontend URL
+  // "https://yourfrontend.com" // production URL
 ];
 
 // ✅ Middlewares
@@ -32,18 +34,19 @@ app.use(
 app.use(cookieParser());
 app.use(express.json());
 
-// ✅ Static files
+// ✅ Static files (uploads folder)
 app.use("/images", express.static("uploads"));
 
-// ✅ Routes
-import userRoutes from "./routes/user.routes.js";
-import sellerRoutes from "./routes/seller.routes.js";
-import productRoutes from "./routes/product.routes.js";
-import cartRoutes from "./routes/cart.routes.js";
-import addressRoutes from "./routes/address.routes.js";
-import orderRoutes from "./routes/order.routes.js";
-import paymentRoutes from "./routes/payment.js";
+// ✅ Routes import
+import userRoutes from "../routes/user.routes.js";
+import sellerRoutes from "../routes/seller.routes.js";
+import productRoutes from "../routes/product.routes.js";
+import cartRoutes from "../routes/cart.routes.js";
+import addressRoutes from "../routes/address.routes.js";
+import orderRoutes from "../routes/order.routes.js";
+import paymentRoutes from "../routes/payment.js";
 
+// ✅ API routes
 app.use("/api/user", userRoutes);
 app.use("/api/seller", sellerRoutes);
 app.use("/api/product", productRoutes);
@@ -57,10 +60,19 @@ app.get("/api/health", (req, res) => {
   res.json({ status: "OK", message: "Server running fine 🚀" });
 });
 
-// ✅ Connect DB & Cloudinary (ek baar hi chalega)
-connectDB();
-connectCloudinary();
+// ✅ Mongo + Cloudinary Connect
+const init = async () => {
+  try {
+    await connectDB();
+    await connectCloudinary();
+    console.log("✅ Database + Cloudinary Connected");
+  } catch (err) {
+    console.error("❌ Init error:", err);
+  }
+};
 
-// ❌ app.listen मत लगाओ
-// ✅ Export app (Vercel ke liye)
+init();
+
+// ❌ app.listen() मत लगाना
+// ✅ Instead export app
 export default app;
