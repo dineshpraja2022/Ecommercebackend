@@ -4,7 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": " nodemon index.js"
+    "dev": " nodemon index.js",
+     "start": "node index.js",
+    "vercel-build": "echo skipping build"
   },
   "keywords": [],
   "author": "",
