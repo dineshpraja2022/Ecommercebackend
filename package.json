@@ -2,7 +2,7 @@
   "name": "backend",
   "version": "1.0.0",
   "description": "MERN backend with Express, MongoDB, Cloudinary, Stripe, Razorpay",
-  "main": "server.js",
+  "main": "index.js",
   "type": "module",
   "scripts": {
     "dev": "nodemon index.js",
