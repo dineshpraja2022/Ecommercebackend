@@ -6,6 +6,14 @@ import dotenv from "dotenv";
 import { connectDB } from "../config/connectDB.js";
 import { connectCloudinary } from "../config/cloudinary.js";
 
+process.on("uncaughtException", (err) => {
+  console.error("Uncaught Exception:", err);
+});
+
+process.on("unhandledRejection", (reason, promise) => {
+  console.error("Unhandled Rejection:", reason);
+});
+
 // ✅ Load environment variables
 dotenv.config();
 
