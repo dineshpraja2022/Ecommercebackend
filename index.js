@@ -6,11 +6,12 @@ import dotenv from "dotenv";
 import { connectDB } from "../config/connectDB.js";
 import { connectCloudinary } from "../config/cloudinary.js";
 
+// Handle unexpected errors
 process.on("uncaughtException", (err) => {
   console.error("Uncaught Exception:", err);
 });
 
-process.on("unhandledRejection", (reason, promise) => {
+process.on("unhandledRejection", (reason) => {
   console.error("Unhandled Rejection:", reason);
 });
 
@@ -22,14 +23,13 @@ const app = express();
 // ✅ Allowed frontend origins
 const allowedOrigins = [
   "http://localhost:5173", // local dev
-  // "https://yourfrontend.com" // production URL
+  "https://yourfrontend.com", // production URL (replace with real domain)
 ];
 
-// ✅ Middlewares
 app.use(
   cors({
     origin: function (origin, callback) {
-      if (!origin || allowedOrigins.includes(origin)) {
+      if (!origin || allowedOrigins.includes(origin) || !origin) {
         callback(null, true);
       } else {
         callback(new Error("Not allowed by CORS"));
@@ -42,7 +42,8 @@ app.use(
 app.use(cookieParser());
 app.use(express.json());
 
-// ✅ Static files (uploads folder)
+// ⚠️ Static files (uploads folder) will NOT work on Vercel (no persistent storage)
+// Use Cloudinary instead for production
 app.use("/images", express.static("uploads"));
 
 // ✅ Routes import
@@ -78,9 +79,8 @@ const init = async () => {
     console.error("❌ Init error:", err);
   }
 };
-
 init();
 
-// ❌ app.listen() मत लगाना
-// ✅ Instead export app
+// ❌ Do NOT use app.listen() on Vercel
+// ✅ Just export app
 export default app;
