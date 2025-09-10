@@ -13,10 +13,9 @@ const app = express();
 
 // ✅ Allowed frontend origins
 const allowedOrigins = [
-  "http://localhost:5173", 
+  "http://localhost:5173",
   "https://your-frontend.vercel.app" // ✅ apna actual Vercel domain
 ];
-
 
 // ✅ Middlewares
 app.use(
@@ -39,8 +38,6 @@ app.use(express.json());
 // ✅ Static files
 app.use("/images", express.static("uploads"));
 
-
-
 // ✅ Routes import
 import userRoutes from "./routes/user.routes.js";
 import sellerRoutes from "./routes/seller.routes.js";
@@ -58,6 +55,11 @@ app.use("/api/cart", cartRoutes);
 app.use("/api/address", addressRoutes);
 app.use("/api/order", orderRoutes);
 app.use("/api/payment", paymentRoutes);
+
+// ✅ Root route
+app.get("/", (req, res) => {
+  res.send("Welcome to VD Elevate Tech Solutions API 🚀. Use /api/health to check server status.");
+});
 
 // ✅ Health check
 app.get("/api/health", (req, res) => {
