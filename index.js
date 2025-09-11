@@ -3,6 +3,8 @@ import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import dotenv from "dotenv";
+import path from "path";
+import { fileURLToPath } from "url";
 import { connectDB } from "./config/connectDB.js";
 import { connectCloudinary } from "./config/cloudinary.js";
 
@@ -11,32 +13,35 @@ dotenv.config();
 
 const app = express();
 
+// ✅ Fix __dirname in ES Modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 // ✅ Allowed frontend origins
 const allowedOrigins = [
   "http://localhost:5173",
-  "https://your-frontend.vercel.app" // ✅ apna actual Vercel domain
+  "https://your-frontend.vercel.app" // 🔥 apna actual Vercel frontend URL
 ];
 
 // ✅ Middlewares
 app.use(
   cors({
     origin: function (origin, callback) {
-      // Postman ya curl me origin null hota hai — allow karein
       if (!origin || allowedOrigins.includes(origin)) {
         callback(null, true);
       } else {
         callback(new Error("Not allowed by CORS"));
       }
     },
-    credentials: true, // ✅ Allow cookies & Authorization header
+    credentials: true,
   })
 );
 
 app.use(cookieParser());
 app.use(express.json());
 
-// ✅ Static files
-app.use("/images", express.static("uploads"));
+// ✅ Static files (uploads folder serve)
+app.use("/images", express.static(path.join(__dirname, "uploads")));
 
 // ✅ Routes import
 import userRoutes from "./routes/user.routes.js";
